@@ -1,25 +1,32 @@
 from sklearn.neighbors import KNeighborsClassifier
 import numpy as py
+import warnings
+
+from ml.evaluation.Evaluator import Evaluator
 
 
 def main():
-    train = py.loadtxt('/home/ekaitz/Escritorio/ml/diabetes_train.csv', delimiter=',', skiprows=1)
-    test = py.loadtxt('/home/ekaitz/Escritorio/ml/diabetes_test.csv', delimiter=',', skiprows=1)
+    warnings.filterwarnings('ignore')
 
-    X_train = train[:, :-1]
-    y_train = train[:, -1:]
+    train = py.genfromtxt('/home/eka/projects/ml-diabetes/diabetes.csv', delimiter=',', dtype='str')
+    test = py.genfromtxt('/home/eka/projects/ml-diabetes/diabetes.csv', delimiter=',', dtype='str')
 
-    X_test = test[:, :-1]
-    y_test = test[:, -1:]
+    X_train = train[1:, :-1] #attrs of all instances
+    y_train = train[1:, -1:] #classes of all instances
 
-    knn = KNeighborsClassifier(n_neighbors=5)
-    knn.fit(X_train, y_train)
+    X_test = test[1:, :-1]
+    y_test = test[1:, -1:]
 
-    i=0
-    for unlabeledInstance in X_test:
-        predicted = knn.predict(unlabeledInstance)
-        print 'Predicted: ' + str(predicted) + ', Real: ' + str(y_test[i])
-        i+=1
+    classifier = KNeighborsClassifier(n_neighbors=3)
+    classifier.fit(X_train, y_train)
+
+    evaluator = Evaluator(classifier)
+    evaluator.setTrain(X_train, y_train)
+    evaluator.setTest(X_test, y_test)
+
+    evaluator.evaluate()
+
+    evaluator.printFullEvaluations()
 
 
 if __name__ == "__main__":
