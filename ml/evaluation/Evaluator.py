@@ -15,10 +15,15 @@ class Evaluator:
         self.__X_test = X_test
         self.__y_test = y_test
 
+    def fMeassure(self):
+        return self.__measures.fscore()
+    
     def evaluate(self):
         i = 0
         for unlabeledInstance in self.__X_test:
-            predicted = self.__classifier.predict(unlabeledInstance)
+            unlabeledInstanceAsFloat = map(lambda x: float(x), unlabeledInstance)
+
+            predicted = self.__classifier.predict(unlabeledInstanceAsFloat)
 
             if int(predicted[0]) == 0 and int(self.__y_test[i][0]) == 0:
                 self.__measures.increaseTn()
